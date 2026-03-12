@@ -19,4 +19,26 @@ const verifyTokenMiddleware = (req, res, next ) => {
     }
 };
 
-module.exports = { verifyTokenMiddleware };
+const verifyOptionalTokenMiddleware = (req, _res, next) => {
+    try {
+        const authHeader = req.headers.authorization;
+
+        if (!authHeader) {
+            return next();
+        }
+
+        const token = authHeader.split(" ")[1];
+
+        if (!token) {
+            return next();
+        }
+
+        const decoded = verifyAccessToken(token);
+        req.user = decoded;
+        return next();
+    } catch (_error) {
+        return next();
+    }
+};
+
+module.exports = { verifyTokenMiddleware, verifyOptionalTokenMiddleware };

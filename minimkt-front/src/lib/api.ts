@@ -1,4 +1,8 @@
-﻿export const API_URL = "http://192.168.1.42:3000";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+function isFormDataBody(body: BodyInit | null | undefined): body is FormData {
+  return typeof FormData !== "undefined" && body instanceof FormData;
+}
 
 async function refreshAccessToken() {
   const refreshToken = localStorage.getItem("refreshToken");
@@ -22,14 +26,17 @@ async function refreshAccessToken() {
 
 export async function apiFetch(path: string, options?: RequestInit) {
   const token = localStorage.getItem("accessToken");
+  const isFormData = isFormDataBody(options?.body);
+
+  const headers: HeadersInit = {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(options?.headers || {}),
+    ...(!isFormData ? { "Content-Type": "application/json" } : {}),
+  };
 
   let response = await fetch(`${API_URL}${path}`, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(options?.headers || {}),
-    },
+    headers,
   });
 
   if (response.status === 401) {
@@ -39,9 +46,9 @@ export async function apiFetch(path: string, options?: RequestInit) {
       response = await fetch(`${API_URL}${path}`, {
         ...options,
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${newToken}`,
           ...(options?.headers || {}),
+          ...(!isFormData ? { "Content-Type": "application/json" } : {}),
         },
       });
     }
@@ -56,5 +63,10 @@ export async function apiFetch(path: string, options?: RequestInit) {
     throw new Error(error.message || joinedErrors || "Erro na requisicao");
   }
 
-  return response.json();
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) {
+    return response.json();
+  }
+
+  return response.text();
 }

@@ -9,11 +9,67 @@
   --pay-title: rgb(245 245 245);
   --pay-subtitle: rgb(212 212 212);
   --pay-primary: rgb(16 185 129);
+  --app-bg:
+    radial-gradient(1200px 600px at 80% -10%, rgb(16 185 129 / 0.08), transparent 55%),
+    radial-gradient(800px 420px at 0% 0%, rgb(59 130 246 / 0.06), transparent 60%),
+    rgb(10 10 10);
+  --app-text: rgb(245 245 245);
+  --glass-bg: rgb(12 12 12 / 0.62);
+  --glass-border: rgb(255 255 255 / 0.12);
 }
 
 html, body {
   margin: 0;
   padding: 0;
+  background: var(--app-bg);
+  color: var(--app-text);
+  min-height: 100%;
+}
+
+html.theme-light {
+  color-scheme: light;
+}
+
+html.theme-light {
+  --app-bg:
+    radial-gradient(1100px 520px at 90% -10%, rgb(16 185 129 / 0.12), transparent 52%),
+    radial-gradient(760px 360px at 0% 0%, rgb(59 130 246 / 0.1), transparent 60%),
+    rgb(245 247 250);
+  --app-text: rgb(23 23 23);
+  --glass-bg: rgb(255 255 255 / 0.82);
+  --glass-border: rgb(17 24 39 / 0.12);
+}
+
+html.theme-light .text-white {
+  color: rgb(17 24 39);
+}
+
+html.theme-light .text-neutral-100,
+html.theme-light .text-neutral-200,
+html.theme-light .text-neutral-300,
+html.theme-light .text-neutral-400 {
+  color: rgb(55 65 81);
+}
+
+html.theme-light .bg-neutral-900,
+html.theme-light .bg-neutral-900\/60,
+html.theme-light .bg-neutral-900\/70,
+html.theme-light .bg-neutral-900\/95,
+html.theme-light .bg-neutral-950,
+html.theme-light .bg-neutral-950\/40,
+html.theme-light .bg-neutral-950\/50,
+html.theme-light .bg-neutral-950\/60,
+html.theme-light .bg-neutral-950\/70 {
+  background-color: rgb(255 255 255 / 0.88);
+}
+
+html.theme-light .border-white\/10 {
+  border-color: rgb(17 24 39 / 0.18);
+}
+
+html.theme-light header {
+  background: rgb(255 255 255 / 0.88) !important;
+  border-color: rgb(17 24 39 / 0.12) !important;
 }
 
 html {
@@ -98,4 +154,116 @@ html {
 .stroke-dashoffset {
   stroke-dashoffset: 24;
   animation: drawCheck 0.6s ease-out 0.3s forwards;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgb(38 38 38 / 0.75) 0%,
+    rgb(64 64 64 / 0.75) 50%,
+    rgb(38 38 38 / 0.75) 100%
+  );
+  background-size: 220% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.glass-panel {
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+}
+
+.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.45rem;
+  border-radius: 0.7rem;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  padding: 0.55rem 1rem;
+  font-weight: 600;
+  transition: all 180ms ease;
+  transform: translateZ(0);
+  cursor: pointer;
+}
+
+.ui-btn-primary {
+  background: linear-gradient(180deg, rgb(16 185 129), rgb(5 150 105));
+  color: rgb(3 7 18);
+  border-color: rgb(16 185 129 / 0.7);
+  box-shadow: 0 8px 20px rgb(16 185 129 / 0.2);
+}
+
+.ui-btn-primary:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 0 0 4px rgb(16 185 129 / 0.15);
+}
+
+.ui-btn-primary:active {
+  transform: scale(0.97);
+}
+
+.ui-btn-outline {
+  border-color: rgb(255 255 255 / 0.28);
+  color: rgb(229 229 229);
+  background: rgb(23 23 23 / 0.7);
+}
+
+.ui-btn-outline:hover {
+  background: rgb(38 38 38 / 0.9);
+}
+
+.ui-btn-danger {
+  border-color: rgb(248 113 113 / 0.45);
+  color: rgb(254 202 202);
+  background: rgb(127 29 29 / 0.65);
+}
+
+.ui-btn-danger:hover {
+  background: rgb(153 27 27 / 0.78);
+}
+
+.ui-btn:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
+.btn-spinner {
+  width: 0.95rem;
+  height: 0.95rem;
+  border: 2px solid rgb(255 255 255 / 0.4);
+  border-top-color: rgb(255 255 255);
+  border-radius: 9999px;
+  animation: spin 0.9s linear infinite;
+  display: inline-block;
+}
+
+.media-cover {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0.65rem;
+  background: rgb(10 10 10);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

@@ -4,6 +4,7 @@ const { cleanupExpiredOrders } = require("../services/orderServices");
 const { getOrderCheckoutSummary } = require("../services/orderServices");
 const { cancelAllPendingOrdersForBuyer } = require("../services/orderServices");
 const { getBuyerOrdersSummary } = require("../services/orderServices");
+const { getSellerSalesDashboard } = require("../services/orderServices");
 
 const createOrderController = async (req, res, next) => {
     try {
@@ -60,10 +61,20 @@ const getMyOrdersController = async (req, res, next) => {
     }
 };
 
+const getSellerDashboardController = async (req, res, next) => {
+    try {
+        const dashboard = await getSellerSalesDashboard(req.user);
+        return res.json(dashboard);
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     createOrderController,
     cleanupExpiredOrdersController,
     getOrderCheckoutSummaryController,
     cancelMyPendingOrdersController,
-    getMyOrdersController
+    getMyOrdersController,
+    getSellerDashboardController
 };

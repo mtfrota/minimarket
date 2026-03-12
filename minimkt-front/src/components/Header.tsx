@@ -8,6 +8,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { motion } from "framer-motion";
+import ThemeToggle from "@/components/ThemeToggle";
+import NotificationCenter from "@/components/NotificationCenter";
 
 type NavItem = {
   label: string;
@@ -22,12 +25,12 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 type UserAction = {
-  id: "orders" | "history" | "settings";
+  id: "orders" | "history" | "settings" | "seller";
   label: string;
   href: string;
 };
 
-const USER_ACTIONS: UserAction[] = [
+const BUYER_USER_ACTIONS: UserAction[] = [
   { id: "orders", label: "Meus pedidos", href: "/meus-pedidos" },
   { id: "history", label: "Historico de compras", href: "/historico-compras" },
   { id: "settings", label: "Configuracoes", href: "/configuracoes" },
@@ -88,6 +91,15 @@ export default function Header() {
     () => cartItems.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0),
     [cartItems],
   );
+  const userActions = useMemo(() => {
+    if (!user) return BUYER_USER_ACTIONS;
+
+    if (user.role === "seller" || user.role === "admin") {
+      return [{ id: "seller", label: "Painel Seller", href: "/seller" }, { id: "settings", label: "Configuracoes", href: "/configuracoes" }] as UserAction[];
+    }
+
+    return BUYER_USER_ACTIONS;
+  }, [user]);
 
   const navLinks = useMemo(
     () =>
@@ -249,12 +261,17 @@ export default function Header() {
           </div>
 
           <div className="mt-4 rounded-xl border border-white/10 p-3">
+            <p className="mb-2 text-xs uppercase tracking-[0.12em] text-neutral-400">Aparencia</p>
+            <ThemeToggle className="h-9 w-9" />
+          </div>
+
+          <div className="mt-4 rounded-xl border border-white/10 p-3">
             {user ? (
               <>
                 <p className="text-sm font-semibold text-white">{displayName}</p>
                 <p className="text-xs text-neutral-400">{displayEmail}</p>
                 <div className="mt-3 space-y-1">
-                  {USER_ACTIONS.map((action) => (
+                  {userActions.map((action) => (
                     <button
                       key={action.id}
                       type="button"
@@ -303,9 +320,13 @@ export default function Header() {
 
         <nav className="mx-10 hidden flex-1 items-center justify-center lg:flex">
           <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/2 p-1">{navLinks}</div>
+          <div className="ml-3">
+            <NotificationCenter />
+          </div>
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          <ThemeToggle className="hidden lg:flex" />
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
@@ -342,7 +363,7 @@ export default function Header() {
                 </div>
 
                 <div className="py-2 text-sm">
-                  {USER_ACTIONS.map((action) => (
+                  {userActions.map((action) => (
                     <button
                       key={action.id}
                       type="button"
@@ -386,9 +407,15 @@ export default function Header() {
               aria-label="Abrir mini carrinho"
             >
               <CartIcon className="h-5 w-5" />
-              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-500 px-1 text-[10px] font-bold text-black">
+              <motion.span
+                key={cartCount}
+                initial={{ scale: 0.7, y: -2 }}
+                animate={{ scale: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-500 px-1 text-[10px] font-bold text-black"
+              >
                 {cartCount}
-              </span>
+              </motion.span>
             </button>
 
             <div

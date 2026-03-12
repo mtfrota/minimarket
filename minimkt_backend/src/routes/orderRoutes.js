@@ -2,7 +2,14 @@ const express = require("express");
 const router = express.Router();
 const { verifyTokenMiddleware } =  require("../middlewares/authMiddleware");
 const { requireRole } = require("../middlewares/roleMiddleware");
-const { createOrderController, cleanupExpiredOrdersController, getOrderCheckoutSummaryController, cancelMyPendingOrdersController, getMyOrdersController } = require("../controllers/orderController");
+const {
+    createOrderController,
+    cleanupExpiredOrdersController,
+    getOrderCheckoutSummaryController,
+    cancelMyPendingOrdersController,
+    getMyOrdersController,
+    getSellerDashboardController
+} = require("../controllers/orderController");
 const { 
     paymentOrderController,
     getPixPaymentController,
@@ -27,6 +34,12 @@ router.post(
     verifyTokenMiddleware,
     requireRole("buyer"),
     cancelMyPendingOrdersController
+);
+router.get(
+    "/seller/dashboard",
+    verifyTokenMiddleware,
+    requireRole(["seller", "admin"]),
+    getSellerDashboardController
 );
 router.get(
     "/my",

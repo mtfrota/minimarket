@@ -10,6 +10,7 @@ type SortOption = "price_asc" | "price_desc" | "best_sellers";
 export default function ProdutosPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
@@ -22,7 +23,8 @@ export default function ProdutosPage() {
       .catch((err: unknown) => {
         const message = err instanceof Error ? err.message : "Erro ao carregar produtos";
         setError(message);
-      });
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const filteredProducts = useMemo(() => {
@@ -113,9 +115,16 @@ export default function ProdutosPage() {
       <p className="mt-4 text-sm text-neutral-400">{filteredProducts.length} produto(s) encontrado(s)</p>
 
       <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-3">
-        {filteredProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+        {loading
+          ? Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="glass-panel p-4">
+                <div className="skeleton h-36 w-full rounded" />
+                <div className="skeleton mt-3 h-5 w-3/4 rounded" />
+                <div className="skeleton mt-2 h-4 w-full rounded" />
+                <div className="skeleton mt-4 h-10 w-full rounded" />
+              </div>
+            ))
+          : filteredProducts.map((product) => <ProductCard key={product.id} product={product} />)}
       </div>
     </section>
   );

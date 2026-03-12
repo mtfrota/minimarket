@@ -32,7 +32,8 @@ export default function LoginPage() {
         setStoredUser(data.user);
       }
 
-      router.push("/");
+      const destination = data.user?.role === "seller" || data.user?.role === "admin" ? "/seller" : "/";
+      router.push(destination);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Erro ao fazer login";
       setError(message);

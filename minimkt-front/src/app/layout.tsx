@@ -1,5 +1,5 @@
-﻿import "./globals.css";
-import Header from "@/components/Header";
+import "./globals.css";
+import AppShell from "@/components/AppShell";
 
 export const metadata = {
   title: "MiniMarket",
@@ -13,9 +13,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className="min-h-screen bg-neutral-950 text-neutral-100">
-        <Header />
-        <main className="mx-auto max-w-6xl p-6 pt-20 sm:pt-24 lg:pt-32">{children}</main>
+      <body>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

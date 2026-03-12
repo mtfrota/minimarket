@@ -8,18 +8,20 @@ import { Product } from "@/types/product";
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     apiFetch("/products")
       .then(setProducts)
-      .catch((err) => setError(err.message));
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
   }, []);
 
   const highlightedProducts = useMemo(() => products.slice(0, 3), [products]);
 
   return (
     <div className="space-y-12 p-6 sm:p-8 lg:p-10">
-      <section className="scroll-mt-28 rounded-2xl border border-white/10 bg-gradient-to-br from-emerald-500/10 via-neutral-900 to-neutral-950 p-6 sm:p-8">
+      <section className="scroll-mt-28 rounded-2xl border border-white/10 bg-linear-to-br from-emerald-500/10 via-neutral-900 to-neutral-950 p-6 sm:p-8">
         <p className="text-xs uppercase tracking-[0.14em] text-emerald-300">MiniMarket</p>
         <h1 className="mt-2 text-3xl font-bold text-white sm:text-4xl">Compras rapidas para o seu dia</h1>
         <p className="mt-3 max-w-xl text-sm text-neutral-300">
@@ -31,9 +33,16 @@ export default function Home() {
         <h2 className="mb-4 text-2xl font-bold text-white">Produtos</h2>
         {error && <p className="mb-4 text-red-400">Erro: {error}</p>}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {loading
+            ? Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="glass-panel p-4">
+                  <div className="skeleton h-36 w-full rounded" />
+                  <div className="skeleton mt-3 h-5 w-3/4 rounded" />
+                  <div className="skeleton mt-2 h-4 w-full rounded" />
+                  <div className="skeleton mt-4 h-10 w-full rounded" />
+                </div>
+              ))
+            : products.map((product) => <ProductCard key={product.id} product={product} />)}
         </div>
       </section>
 

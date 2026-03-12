@@ -321,10 +321,162 @@ const getBuyerOrdersSummary = async (buyerId) => {
   return result.rows;
 };
 
+const getSellerSalesDashboard = async (user) => {
+  const sellerFilter = user.role === "seller" ? "p.seller_id = $1" : "1=1";
+  const sellerValues = user.role === "seller" ? [user.userId] : [];
+
+  const summaryResult = await db.query(
+    `
+    SELECT
+      COALESCE(COUNT(DISTINCT CASE WHEN o.status = 'paid' THEN o.id END), 0) AS paid_orders,
+      COALESCE(COUNT(DISTINCT CASE WHEN o.status IN ('paid', 'pending') THEN o.id END), 0) AS total_orders,
+      COALESCE(SUM(CASE WHEN o.status = 'paid' THEN oi.quantity ELSE 0 END), 0) AS sold_items,
+      COALESCE(SUM(CASE WHEN o.status = 'paid' THEN oi.quantity * oi.unit_price ELSE 0 END), 0) AS revenue_cents,
+      COALESCE(SUM(CASE WHEN o.status = 'pending' THEN oi.quantity * oi.unit_price ELSE 0 END), 0) AS pending_cents,
+      COALESCE(SUM(CASE WHEN o.status = 'paid' AND DATE(o.created_at) = CURRENT_DATE THEN oi.quantity * oi.unit_price ELSE 0 END), 0) AS today_sales_cents,
+      COALESCE(SUM(CASE WHEN o.status = 'paid' AND DATE_TRUNC('month', o.created_at) = DATE_TRUNC('month', CURRENT_DATE) THEN oi.quantity * oi.unit_price ELSE 0 END), 0) AS month_sales_cents
+    FROM order_items oi
+    JOIN orders o ON o.id = oi.order_id
+    JOIN products p ON p.id = oi.product_id
+    WHERE ${sellerFilter}
+    `,
+    sellerValues
+  );
+
+  const recentSalesResult = await db.query(
+    `
+    SELECT
+      o.id AS order_id,
+      o.status,
+      o.created_at,
+      SUM(oi.quantity) AS items_count,
+      SUM(oi.quantity * oi.unit_price) AS seller_total_cents
+    FROM order_items oi
+    JOIN orders o ON o.id = oi.order_id
+    JOIN products p ON p.id = oi.product_id
+    WHERE ${sellerFilter}
+    GROUP BY o.id, o.status, o.created_at
+    ORDER BY o.created_at DESC
+    LIMIT 10
+    `,
+    sellerValues
+  );
+
+  const topProductsResult = await db.query(
+    `
+    SELECT
+      p.id,
+      p.title,
+      SUM(oi.quantity) AS sold_units,
+      SUM(oi.quantity * oi.unit_price) AS revenue_cents
+    FROM order_items oi
+    JOIN orders o ON o.id = oi.order_id
+    JOIN products p ON p.id = oi.product_id
+    WHERE ${sellerFilter}
+      AND o.status = 'paid'
+    GROUP BY p.id, p.title
+    ORDER BY revenue_cents DESC
+    LIMIT 5
+    `,
+    sellerValues
+  );
+
+  const lowStockResult = await db.query(
+    `
+    SELECT
+      p.id,
+      p.title,
+      p.stock
+    FROM products p
+    WHERE ${user.role === "seller" ? "p.seller_id = $1" : "1=1"}
+      AND p.status = 'active'
+      AND p.stock < 5
+    ORDER BY p.stock ASC, p.title ASC
+    LIMIT 10
+    `,
+    sellerValues
+  );
+
+  const salesByDayResult = await db.query(
+    `
+    SELECT
+      DATE(o.created_at) AS day,
+      COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS revenue_cents
+    FROM order_items oi
+    JOIN orders o ON o.id = oi.order_id
+    JOIN products p ON p.id = oi.product_id
+    WHERE ${sellerFilter}
+      AND o.status = 'paid'
+      AND o.created_at >= CURRENT_DATE - INTERVAL '6 days'
+    GROUP BY DATE(o.created_at)
+    ORDER BY DATE(o.created_at) ASC
+    `,
+    sellerValues
+  );
+
+  const revenueByDayMap = new Map(
+    salesByDayResult.rows.map((row) => [
+      new Date(row.day).toISOString().slice(0, 10),
+      Number(row.revenue_cents) || 0
+    ])
+  );
+
+  const salesByDay = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() - (6 - index));
+    const key = date.toISOString().slice(0, 10);
+
+    return {
+      day: key,
+      revenue_cents: revenueByDayMap.get(key) || 0
+    };
+  });
+
+  const summary = summaryResult.rows[0] || {
+    paid_orders: 0,
+    total_orders: 0,
+    sold_items: 0,
+    revenue_cents: 0,
+    pending_cents: 0,
+    today_sales_cents: 0,
+    month_sales_cents: 0
+  };
+
+  return {
+    summary: {
+      paid_orders: Number(summary.paid_orders) || 0,
+      total_orders: Number(summary.total_orders) || 0,
+      sold_items: Number(summary.sold_items) || 0,
+      revenue_cents: Number(summary.revenue_cents) || 0,
+      pending_cents: Number(summary.pending_cents) || 0,
+      today_sales_cents: Number(summary.today_sales_cents) || 0,
+      month_sales_cents: Number(summary.month_sales_cents) || 0,
+      low_stock_count: lowStockResult.rowCount
+    },
+    recent_sales: recentSalesResult.rows.map((sale) => ({
+      ...sale,
+      items_count: Number(sale.items_count) || 0,
+      seller_total_cents: Number(sale.seller_total_cents) || 0
+    })),
+    top_products: topProductsResult.rows.map((item) => ({
+      ...item,
+      sold_units: Number(item.sold_units) || 0,
+      revenue_cents: Number(item.revenue_cents) || 0
+    })),
+    sales_by_day: salesByDay,
+    low_stock_products: lowStockResult.rows.map((item) => ({
+      ...item,
+      stock: Number(item.stock) || 0
+    }))
+  };
+};
+
 module.exports = {
   createOrder,
   cleanupExpiredOrders,
   getOrderCheckoutSummary,
   cancelAllPendingOrdersForBuyer,
-  getBuyerOrdersSummary
+  getBuyerOrdersSummary,
+  getSellerSalesDashboard
 };

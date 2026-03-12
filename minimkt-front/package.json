@@ -10,10 +10,13 @@
   },
   "dependencies": {
     "credit-card-type": "^10.1.2",
+    "framer-motion": "^12.36.0",
     "lottie-react": "^2.4.1",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-hot-toast": "^2.6.0",
+    "recharts": "^3.8.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

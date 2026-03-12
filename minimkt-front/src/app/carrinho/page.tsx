@@ -6,6 +6,7 @@ import { CartItem } from "@/types/cart";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 
 type CreateOrderResponse = {
   id: string;
@@ -106,12 +107,24 @@ export default function CarrinhoPage() {
         <>
           <div className="space-y-3">
             {items.map((item) => (
-              <article key={item.productId} className="rounded-xl border border-white/10 bg-neutral-950/40 p-4">
+              <motion.article
+                key={item.productId}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.18 }}
+                className="rounded-xl border border-white/10 bg-neutral-950/40 p-4"
+              >
                 <div className="flex items-start justify-between gap-4">
-                  <div>
+                  <div className="flex gap-3">
+                    {item.imageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={item.imageUrl} alt={item.title} className="h-16 w-16 shrink-0 rounded bg-neutral-900 object-cover" />
+                    ) : null}
+                    <div>
                     <h2 className="text-sm font-semibold text-white">{item.title}</h2>
                     <p className="mt-1 text-xs text-neutral-400">{item.description}</p>
                     <p className="mt-2 text-sm text-emerald-300">{formatMoney(item.unitPrice)}</p>
+                    </div>
                   </div>
                   <button
                     onClick={() => removeFromCart(item.productId)}
@@ -123,19 +136,19 @@ export default function CarrinhoPage() {
                 <div className="mt-3 flex items-center gap-2">
                   <button
                     onClick={() => updateCartItemQuantity(item.productId, item.quantity - 1)}
-                    className="h-8 w-8 rounded-md border border-white/10"
+                    className="h-8 w-8 rounded-md border border-white/10 transition hover:bg-white/10 active:scale-95"
                   >
                     -
                   </button>
                   <span className="min-w-8 text-center text-sm">{item.quantity}</span>
                   <button
                     onClick={() => updateCartItemQuantity(item.productId, item.quantity + 1)}
-                    className="h-8 w-8 rounded-md border border-white/10"
+                    className="h-8 w-8 rounded-md border border-white/10 transition hover:bg-white/10 active:scale-95"
                   >
                     +
                   </button>
                 </div>
-              </article>
+              </motion.article>
             ))}
           </div>
 

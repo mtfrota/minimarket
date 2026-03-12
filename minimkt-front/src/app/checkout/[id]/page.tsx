@@ -17,6 +17,7 @@ import { API_URL, apiFetch } from "@/lib/api";
 import { trackPaymentEvent } from "@/lib/paymentTelemetry";
 import Lottie from "lottie-react";
 import Image from "next/image";
+import toast from "react-hot-toast";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -208,6 +209,7 @@ export default function CheckoutPage() {
       setDebitOverlayState("approved");
       setDebitOverlayMessage("Pagamento confirmado com sucesso.");
       setDebitPollingDelay(2000);
+      toast.success("Compra realizada");
       trackPaymentEvent("confirmed", { method: "debit_qr", token: debitQrSession?.token });
       return;
     }
@@ -370,6 +372,7 @@ export default function CheckoutPage() {
         if (response.status === "approved") {
           setConfirmationState("approved");
           setConfirmationMessage("Pagamento confirmado com sucesso.");
+          toast.success("Compra realizada");
           trackPaymentEvent("confirmed", { method: "card" });
         }
         else {

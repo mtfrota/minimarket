@@ -78,7 +78,9 @@ export default function RegisterPage() {
         setStoredUser(createdUser);
       }
 
-      router.push("/");
+      const role = loginData.user?.role || createdUser.role;
+      const destination = role === "seller" || role === "admin" ? "/seller" : "/";
+      router.push(destination);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Erro ao cadastrar";
       setError(message);

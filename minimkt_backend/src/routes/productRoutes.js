@@ -1,9 +1,23 @@
 const express = require("express");
 const router = express.Router();
 
-const { verifyTokenMiddleware } = require("../middlewares/authMiddleware");
+const {
+    verifyTokenMiddleware,
+    verifyOptionalTokenMiddleware
+} = require("../middlewares/authMiddleware");
 const { requireRole } = require("../middlewares/roleMiddleware");
-const { createProductController, listProductsController, getProductByIdController } = require("../controllers/productController");
+const { uploadProductImageMiddleware } = require("../middlewares/uploadMiddleware");
+const {
+    createProductController,
+    updateProductController,
+    deleteProductController,
+    listProductsController,
+    listMyProductsController,
+    getProductByIdController,
+    listCategoriesController,
+    createCategoryController,
+    uploadProductImageController
+} = require("../controllers/productController");
 
 router.post(
     "/",
@@ -11,7 +25,40 @@ router.post(
     requireRole(["seller", "admin"]),
     createProductController
 );
-router.get("/", listProductsController);
-router.get("/:id", getProductByIdController);
+router.patch(
+    "/:id",
+    verifyTokenMiddleware,
+    requireRole(["seller", "admin"]),
+    updateProductController
+);
+router.delete(
+    "/:id",
+    verifyTokenMiddleware,
+    requireRole(["seller", "admin"]),
+    deleteProductController
+);
+router.post(
+    "/upload-image",
+    verifyTokenMiddleware,
+    requireRole(["seller", "admin"]),
+    uploadProductImageMiddleware,
+    uploadProductImageController
+);
+
+router.get(
+    "/my",
+    verifyTokenMiddleware,
+    requireRole(["seller", "admin"]),
+    listMyProductsController
+);
+router.post(
+    "/categories",
+    verifyTokenMiddleware,
+    requireRole(["seller", "admin"]),
+    createCategoryController
+);
+router.get("/categories", listCategoriesController);
+router.get("/", verifyOptionalTokenMiddleware, listProductsController);
+router.get("/:id", verifyOptionalTokenMiddleware, getProductByIdController);
 
 module.exports = router;
