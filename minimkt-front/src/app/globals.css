@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+:root {
+  --pay-bg-from: rgb(10 10 10);
+  --pay-bg-via: rgb(23 23 23);
+  --pay-bg-to: rgb(10 10 10);
+  --pay-card-bg: rgb(23 23 23 / 0.8);
+  --pay-card-border: rgb(38 38 38);
+  --pay-title: rgb(245 245 245);
+  --pay-subtitle: rgb(212 212 212);
+  --pay-primary: rgb(16 185 129);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+:focus-visible {
+  outline: 2px solid rgb(16 185 129);
+  outline-offset: 2px;
+}
+
+.payment-screen {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  color: white;
+  background: linear-gradient(
+    to bottom,
+    var(--pay-bg-from),
+    var(--pay-bg-via),
+    var(--pay-bg-to)
+  );
+}
+
+.payment-card {
+  border-radius: 1rem;
+  border: 1px solid var(--pay-card-border);
+  background: var(--pay-card-bg);
+  padding: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.7);
+  backdrop-filter: blur(8px);
+}
+
+.payment-title {
+  margin-top: 0.5rem;
+  color: var(--pay-title);
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+}
+
+.payment-subtitle {
+  margin-top: 0.5rem;
+  color: var(--pay-subtitle);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes drawCheck {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes drw { 
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.4s ease-out forwards;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-in forwards;
+}
+
+.stroke-dasharray {
+  stroke-dasharray: 24;
+}
+
+.stroke-dashoffset {
+  stroke-dashoffset: 24;
+  animation: drawCheck 0.6s ease-out 0.3s forwards;
+}
