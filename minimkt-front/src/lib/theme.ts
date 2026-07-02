@@ -14,6 +14,7 @@ export function applyTheme(theme: ThemeMode) {
   const root = document.documentElement;
   root.classList.remove("theme-dark", "theme-light");
   root.classList.add(theme === "light" ? "theme-light" : "theme-dark");
+  root.style.colorScheme = theme;
   localStorage.setItem(THEME_STORAGE_KEY, theme);
   window.dispatchEvent(new Event("theme:changed"));
 }

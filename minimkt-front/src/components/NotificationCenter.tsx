@@ -31,7 +31,8 @@ function formatNotificationDate(isoDate: string) {
 
 export default function NotificationCenter() {
   const [open, setOpen] = useState(false);
-  const [notifications, setNotifications] = useState<SystemNotification[]>(() => readStoredNotifications());
+  const [notifications, setNotifications] = useState<SystemNotification[]>([]);
+  const [hydrated, setHydrated] = useState(false);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
   const unreadCount = useMemo(
@@ -40,8 +41,18 @@ export default function NotificationCenter() {
   );
 
   useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setNotifications(readStoredNotifications());
+      setHydrated(true);
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
     saveNotifications(notifications);
-  }, [notifications]);
+  }, [hydrated, notifications]);
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
@@ -59,13 +70,15 @@ export default function NotificationCenter() {
       }, randomDelayMs());
     };
 
-    schedule();
+    if (hydrated) {
+      schedule();
+    }
 
     return () => {
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, []);
+  }, [hydrated]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

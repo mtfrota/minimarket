@@ -25,24 +25,36 @@ function MoonIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export default function ThemeToggle({ className = "" }: { className?: string }) {
-  const [theme, setTheme] = useState<ThemeMode>(() => getStoredTheme());
+  const [theme, setTheme] = useState<ThemeMode>("dark");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    applyTheme(theme);
+    const timer = window.setTimeout(() => {
+      setTheme(getStoredTheme());
+      setMounted(true);
+    }, 0);
 
     const handleThemeChange = () => {
       setTheme(getStoredTheme());
     };
 
     window.addEventListener("theme:changed", handleThemeChange);
-    return () => window.removeEventListener("theme:changed", handleThemeChange);
-  }, [theme]);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("theme:changed", handleThemeChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    applyTheme(theme);
+  }, [mounted, theme]);
 
   return (
     <button
       type="button"
       onClick={() => setTheme((current) => toggleTheme(current))}
-      className={`relative flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-neutral-300 transition hover:bg-white/10 hover:text-white ${className}`}
+      className={`theme-toggle relative flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-neutral-300 transition hover:bg-white/10 hover:text-white ${className}`}
       aria-label={theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro"}
       title={theme === "dark" ? "Modo claro" : "Modo escuro"}
     >

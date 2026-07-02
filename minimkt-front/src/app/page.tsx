@@ -21,12 +21,19 @@ export default function Home() {
 
   return (
     <div className="space-y-12 p-6 sm:p-8 lg:p-10">
-      <section className="scroll-mt-28 rounded-2xl border border-white/10 bg-linear-to-br from-emerald-500/10 via-neutral-900 to-neutral-950 p-6 sm:p-8">
-        <p className="text-xs uppercase tracking-[0.14em] text-emerald-300">MiniMarket</p>
-        <h1 className="mt-2 text-3xl font-bold text-white sm:text-4xl">Compras rapidas para o seu dia</h1>
-        <p className="mt-3 max-w-xl text-sm text-neutral-300">
+      <section className="glass-panel scroll-mt-28 overflow-hidden p-6 sm:p-8">
+        <div className="max-w-2xl">
+          <p className="text-xs uppercase tracking-[0.14em] text-emerald-300">MiniMarket</p>
+          <h1 className="mt-2 text-3xl font-black text-white sm:text-5xl">Compras rapidas para o seu dia</h1>
+          <p className="mt-3 max-w-xl text-sm text-neutral-300 sm:text-base">
           Explore produtos, aproveite ofertas e finalize pagamentos com seguranca em poucos passos.
-        </p>
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3 text-xs text-neutral-300">
+            <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1">PIX e cartao</span>
+            <span className="rounded-full border border-indigo-400/30 bg-indigo-400/10 px-3 py-1">Checkout rapido</span>
+            <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1">Ofertas atualizadas</span>
+          </div>
+        </div>
       </section>
 
       <section id="produtos" className="scroll-mt-28">
@@ -46,7 +53,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="ofertas" className="scroll-mt-28 rounded-2xl border border-white/10 bg-neutral-900/60 p-6 sm:p-8">
+      <section id="ofertas" className="glass-panel scroll-mt-28 p-6 sm:p-8">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-white">Ofertas</h2>
           <span className="rounded-full bg-emerald-500/20 px-3 py-1 text-xs text-emerald-300">Atualizado hoje</span>
@@ -66,7 +73,7 @@ export default function Home() {
         )}
       </section>
 
-      <section id="contato" className="scroll-mt-28 rounded-2xl border border-white/10 bg-neutral-900/60 p-6 sm:p-8">
+      <section id="contato" className="glass-panel scroll-mt-28 p-6 sm:p-8">
         <h2 className="text-2xl font-bold text-white">Contato</h2>
         <p className="mt-3 text-sm text-neutral-300">Fale com nosso time para suporte, duvidas sobre pedidos e parceria comercial.</p>
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">

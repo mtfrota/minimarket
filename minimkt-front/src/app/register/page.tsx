@@ -90,74 +90,87 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-20 bg-neutral-900 p-6 rounded border border-neutral-800">
-      <h1 className="text-xl font-bold mb-6">Cadastro</h1>
-
-      <form onSubmit={handleRegister} className="space-y-4">
-        <input
-          placeholder="Nome"
-          className="w-full p-2 rounded bg-neutral-800 border border-neutral-700"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full p-2 rounded bg-neutral-800 border border-neutral-700"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <div>
-          <input
-            type="password"
-            placeholder="Senha"
-            className="w-full p-2 rounded bg-neutral-800 border border-neutral-700"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <div className="mt-2 flex gap-1">
-            {[1, 2, 3, 4].map((level) => {
-              const active = passwordStrength >= level;
-              const isStrong = passwordStrength >= 4;
-              return (
-                <div
-                  key={level}
-                  className={`h-1.5 flex-1 rounded ${active ? (isStrong ? "bg-emerald-500" : "bg-yellow-400") : "bg-neutral-700"}`}
-                />
-              );
-            })}
-          </div>
-          <p className="mt-1 text-xs text-neutral-400">
-            Forca da senha: {passwordStrength >= 4 ? "Forte" : passwordStrength >= 2 ? "Media" : "Fraca"}
-          </p>
+    <div className="mx-auto mt-8 w-full max-w-md">
+      <div className="glass-panel p-6 sm:p-7">
+        <div className="mb-6">
+          <p className="text-xs uppercase tracking-[0.18em] text-emerald-300">Comece agora</p>
+          <h1 className="mt-2 text-2xl font-bold text-white">Criar conta</h1>
+          <p className="mt-2 text-sm text-neutral-400">Monte seu carrinho e finalize compras em poucos passos.</p>
         </div>
 
-        <input
-          type="password"
-          placeholder="Confirmar senha"
-          className="w-full p-2 rounded bg-neutral-800 border border-neutral-700"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
+        <form onSubmit={handleRegister} className="space-y-4">
+          <label className="block text-sm text-neutral-300">
+            Nome
+            <input
+              placeholder="Nome completo"
+              className="mt-1 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2.5 outline-none transition"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </label>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+          <label className="block text-sm text-neutral-300">
+            Email
+            <input
+              type="email"
+              placeholder="voce@email.com"
+              className="mt-1 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2.5 outline-none transition"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
 
-        <button
-          disabled={loading}
-          className="w-full bg-emerald-600 hover:bg-emerald-700 p-2 rounded font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          {loading ? "Cadastrando..." : "Criar conta"}
-        </button>
-      </form>
+          <label className="block text-sm text-neutral-300">
+            Senha
+            <input
+              type="password"
+              placeholder="Senha forte"
+              className="mt-1 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2.5 outline-none transition"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <div className="mt-2 flex gap-1">
+              {[1, 2, 3, 4].map((level) => {
+                const active = passwordStrength >= level;
+                const isStrong = passwordStrength >= 4;
+                return (
+                  <div
+                    key={level}
+                    className={`h-1.5 flex-1 rounded ${active ? (isStrong ? "bg-emerald-400" : "bg-yellow-400") : "bg-neutral-700"}`}
+                  />
+                );
+              })}
+            </div>
+            <p className="mt-1 text-xs text-neutral-400">
+              Forca da senha: {passwordStrength >= 4 ? "Forte" : passwordStrength >= 2 ? "Media" : "Fraca"}
+            </p>
+          </label>
 
-      <p className="mt-4 text-sm text-neutral-400">
-        Ja possui conta?{" "}
-        <Link href="/login" className="text-emerald-400 hover:text-emerald-300">
-          Entrar
-        </Link>
-      </p>
+          <label className="block text-sm text-neutral-300">
+            Confirmar senha
+            <input
+              type="password"
+              placeholder="Repita a senha"
+              className="mt-1 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2.5 outline-none transition"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </label>
+
+          {error && <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">{error}</p>}
+
+          <button disabled={loading} className="ui-btn ui-btn-primary w-full">
+            {loading ? "Cadastrando..." : "Criar conta"}
+          </button>
+        </form>
+
+        <p className="mt-5 text-sm text-neutral-400">
+          Ja possui conta?{" "}
+          <Link href="/login" className="font-semibold text-emerald-300 hover:text-emerald-200">
+            Entrar
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

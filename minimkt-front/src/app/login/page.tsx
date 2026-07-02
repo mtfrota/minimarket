@@ -43,50 +43,57 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-20 bg-neutral-900 p-6 rounded border border-neutral-800">
-      <h1 className="text-xl font-bold mb-6">Login</h1>
-
-      <form onSubmit={handleLogin} className="space-y-4">
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full p-2 rounded bg-neutral-800 border border-neutral-700"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <div>
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Senha"
-            className="w-full p-2 rounded bg-neutral-800 border border-neutral-700"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
-            className="mt-1 text-xs text-neutral-400 transition hover:text-neutral-200"
-          >
-            {showPassword ? "Ocultar senha" : "Mostrar senha"}
-          </button>
+    <div className="mx-auto mt-10 w-full max-w-md">
+      <div className="glass-panel p-6 sm:p-7">
+        <div className="mb-6">
+          <p className="text-xs uppercase tracking-[0.18em] text-emerald-300">MiniMarket</p>
+          <h1 className="mt-2 text-2xl font-bold text-white">Entrar na conta</h1>
+          <p className="mt-2 text-sm text-neutral-400">Acesse pedidos, carrinho e painel de vendas.</p>
         </div>
 
-        {error && <p className="text-red-300 text-sm" role="alert" aria-live="assertive">{error}</p>}
+        <form onSubmit={handleLogin} className="space-y-4">
+          <label className="block text-sm text-neutral-300">
+            Email
+            <input
+              type="email"
+              placeholder="voce@email.com"
+              className="mt-1 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2.5 outline-none transition"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
 
-        <button
-          disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 p-2 rounded font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          {loading ? "Entrando..." : "Entrar"}
-        </button>
-      </form>
-      <p className="mt-4 text-sm text-neutral-400">
-        Nao tem conta?{" "}
-        <Link href="/register" className="text-emerald-400 hover:text-emerald-300">
-          Cadastrar
-        </Link>
-      </p>
+          <label className="block text-sm text-neutral-300">
+            Senha
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Sua senha"
+              className="mt-1 w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2.5 outline-none transition"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="mt-2 text-xs font-medium text-emerald-300 transition hover:text-emerald-200"
+            >
+              {showPassword ? "Ocultar senha" : "Mostrar senha"}
+            </button>
+          </label>
+
+          {error && <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300" role="alert" aria-live="assertive">{error}</p>}
+
+          <button disabled={loading} className="ui-btn ui-btn-primary w-full">
+            {loading ? "Entrando..." : "Entrar"}
+          </button>
+        </form>
+        <p className="mt-5 text-sm text-neutral-400">
+          Nao tem conta?{" "}
+          <Link href="/register" className="font-semibold text-emerald-300 hover:text-emerald-200">
+            Cadastrar
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

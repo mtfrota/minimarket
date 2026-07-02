@@ -100,6 +100,7 @@ export default function Header() {
 
     return BUYER_USER_ACTIONS;
   }, [user]);
+  const canUseNotifications = user?.role === "seller" || user?.role === "admin";
 
   const navLinks = useMemo(
     () =>
@@ -229,9 +230,9 @@ export default function Header() {
       <div className="absolute inset-0 z-1 bg-black/75 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
       <div
         className={`absolute right-0 top-0 z-2 h-full w-full sm:w-[86%] sm:max-w-sm border-l border-white/10 p-4 shadow-2xl transition-transform duration-200 ${mobileOpen ? "translate-x-0" : "translate-x-full"}`}
-        style={{ backgroundColor: "#050505" }}
+        style={{ backgroundColor: "var(--surface-solid)" }}
       >
-        <div className="absolute inset-0 bg-[#050505]" />
+        <div className="absolute inset-0" style={{ background: "var(--glass-bg)" }} />
         <div className="relative z-10 h-full overflow-y-auto">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-sm font-semibold text-white">Menu</p>
@@ -312,17 +313,19 @@ export default function Header() {
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-neutral-950/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center px-4 lg:h-20 lg:px-8">
         <Link href="/" className="flex items-center gap-3 rounded-lg p-1 transition hover:bg-white/5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 ring-1 ring-emerald-500/20">
-            <span className="text-lg font-bold text-emerald-400">M</span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-emerald-400 via-teal-400 to-indigo-400 shadow-[0_10px_30px_rgba(16,185,129,0.24)] ring-1 ring-white/20">
+            <span className="text-lg font-black text-neutral-950">M</span>
           </div>
           <span className="text-lg font-semibold tracking-wide text-white">MiniMarket</span>
         </Link>
 
         <nav className="mx-10 hidden flex-1 items-center justify-center lg:flex">
-          <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/2 p-1">{navLinks}</div>
-          <div className="ml-3">
-            <NotificationCenter />
-          </div>
+          <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-1 shadow-lg shadow-black/10 backdrop-blur">{navLinks}</div>
+          {canUseNotifications ? (
+            <div className="ml-3">
+              <NotificationCenter />
+            </div>
+          ) : null}
         </nav>
 
         <div className="ml-auto flex items-center gap-2">

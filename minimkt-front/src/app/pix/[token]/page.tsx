@@ -2,6 +2,7 @@
 
 import successAnimation from "@/animations/success.json";
 import PaymentLayout from "@/components/PaymentLayout";
+import { API_URL } from "@/lib/api";
 import Lottie from "lottie-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -15,7 +16,7 @@ type PixData = {
   transaction_id?: string;
 };
 
-const API_BASE = "http://192.168.1.42:3000";
+const API_BASE = API_URL;
 
 function normalizeText(value: string) {
   return value

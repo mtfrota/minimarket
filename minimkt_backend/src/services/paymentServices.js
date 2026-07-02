@@ -1,7 +1,8 @@
 const db = require("../database/connection");
 const QRCode = require("qrcode");
 const { v4: uuidv4 } = require("uuid");
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://192.168.1.42:3001";
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3001";
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
 const logPaymentEvent = async (
     client,
     {
@@ -141,7 +142,7 @@ const createPixPayment = async (orderId, requestInfo = {}) => {
 
         await client.query("COMMIT");
 
-        const qrUrl = `http://localhost:3000/orders/pix/${publicToken}`;
+        const qrUrl = `${BACKEND_URL}/orders/pix/${publicToken}`;
         console.log("QR URL:", qrUrl);
         const qrCodeBase64 = await QRCode.toDataURL(qrUrl);
         console.log("QR gerado tamanho", qrCodeBase64?.length);
@@ -200,7 +201,7 @@ const getPixPaymentByToken = async (publicToken) => {
         return { message: "Pedido expirado."};
     }
 
-    const qrURL = `http://192.168.1.42:3001/mobile-pay/${publicToken}`;
+    const qrURL = `${FRONTEND_URL}/mobile-pay/${publicToken}`;
     const qrCodeBase64 = await QRCode.toDataURL(qrURL);
 
     return {

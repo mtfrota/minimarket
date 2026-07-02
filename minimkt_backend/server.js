@@ -5,11 +5,25 @@ const path = require("path");
 
 const app = express();
 
+const defaultAllowedOrigins = [
+  "http://localhost:3001"
+];
+
+const envAllowedOrigins = (process.env.CORS_ORIGINS || process.env.FRONTEND_URL || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const allowedOrigins = [...new Set([...defaultAllowedOrigins, ...envAllowedOrigins])];
+
 app.use(cors({
-  origin: [
-    "http://localhost:3001",
-    "http://192.168.1.42:3001"
-  ]
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("Origem nao permitida pelo CORS"));
+  }
 }));
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
